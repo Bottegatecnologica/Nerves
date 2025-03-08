@@ -34,14 +34,14 @@ pub enum Token {
     Hive,
     
     // Identifiers and literals
-    #[regex(r"[a-zA-Z_][a-zA-Z0-9_]*", priority = 1)]
-    Identifier,
+    #[regex(r"[a-zA-Z_][a-zA-Z0-9_]*", priority = 1, callback = |lex| lex.slice().to_string())]
+    Identifier(String),
     
-    #[regex(r#""([^"\\]|\\.)*""#)]
-    String,
+    #[regex(r#""([^"\\]|\\.)*""#, callback = |lex| lex.slice()[1..lex.slice().len()-1].to_string())]
+    String(String),
     
-    #[regex(r"[0-9]+(\.[0-9]+)?")]
-    Number,
+    #[regex(r"[0-9]+(\.[0-9]+)?", callback = |lex| lex.slice().to_string())]
+    Number(String),
     
     // Symbols
     #[token("(")]
@@ -81,5 +81,6 @@ pub enum Token {
     Whitespace,
     
     // Error fallback
+    #[error]
     Error,
 }
