@@ -33,23 +33,6 @@ fn statement_parser() -> impl Parser<Token, Statement, Error = Simple<Token>> {
     ])
 }
 
-// Rest of the parser implementation remains the same...
-
-// Function for parsing statements
-fn statement_parser() -> impl Parser<Token, Statement, Error = Simple<Token>> {
-    choice([
-        // Return statement with optional expression
-        just(Token::Identifier(String::from("return")))
-            .ignore_then(expression_parser().or_not())
-            .then_ignore(just(Token::Semicolon))
-            .map(Statement::Return),
-        
-        // Empty statement (semicolon)
-        just(Token::Semicolon)
-            .map(|_| Statement::Return(None))
-    ])
-}
-
 // Add the parse function
 pub fn parse(tokens: Vec<Token>) -> Result<Program, Vec<Simple<Token>>> {
     let program_parser = program_parser();
@@ -91,9 +74,14 @@ fn ritual_parser() -> impl Parser<Token, Ritual, Error = Simple<Token>> {
     just(Token::Ritual)
         .ignore_then(select! { Token::Identifier(name) => name })
         .then_ignore(just(Token::LParen))
-        .then(parameter_parser().repeated().or(empty().to(vec![])))
+        .then(parameter_parser().separated_by(just(Token::Comma)).or(empty().to(vec![])))
         .then_ignore(just(Token::RParen))
-        .then(type_parser().or(just(Token::Identifier(String::from("void"))).to(Type::Void)))
+        // Make the return type optional with a default of Type::Void
+        .then(
+            type_parser()
+                .or_not()
+                .map(|t| t.unwrap_or(Type::Void))
+        )
         .then_ignore(just(Token::LBrace))
         .then(statement_parser().repeated().or(empty().to(vec![])))
         .then_ignore(just(Token::RBrace))

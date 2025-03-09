@@ -48,14 +48,51 @@ fn main() -> Result<(), Box<dyn Error>> {
         // Usa l'esempio incorporato
         println!("No input file specified, using built-in example");
         String::from(r#"
-        realm TestRealm {
-            being TestBeing {
-                ritual hello() {
-                    return "Hello, Nervs!";
-                }
+realm MathRealm {
+    being Calculator {
+        // Variabili del being
+        int pi_approx: 314;
+        
+        // Ritual con parametri e tipo di ritorno esplicito
+        ritual add(a: int, b: int) int {
+            return a + b;
+        }
+        
+        // Ritual che chiama un altro ritual
+        ritual multiply(a: int, b: int) int {
+            int result: a * b;
+            return result;
+        }
+        
+        // Ritual con tipo di ritorno string
+        ritual greet() string {
+            return "Hello, Nervs!";
+        }
+        
+        // Ritual condizionale
+        ritual max(a: int, b: int) int {
+            if (a > b) {
+                return a;
+            } else {
+                return b;
             }
         }
-        "#)
+        
+        // Ritual con ciclo
+        ritual factorial(n: int) int {
+            int result: 1;
+            int i: 1;
+            
+            cycle (i <= n) {
+                result = result * i;
+                i = i + 1;
+            }
+            
+            return result;
+        }
+    }
+}
+"#)
     };
     
     // Test del lexer
@@ -78,6 +115,20 @@ fn main() -> Result<(), Box<dyn Error>> {
                 Ok(program) => {
                     println!("\nParsing successful!");
                     println!("Parsed {} realm(s)", program.realms.len());
+                    
+                    // Esegui l'analisi semantica
+                    println!("\nStarting semantic analysis...");
+                    match semantic::analyze(&program) {
+                        Ok(_) => {
+                            println!("Semantic analysis successful!");
+                            
+                            // Qui si potrebbe aggiungere la generazione del codice
+                            // e l'applicazione dei sigilli se necessario
+                        },
+                        Err(e) => {
+                            println!("Semantic error: {}", e);
+                        }
+                    }
                 },
                 Err(errors) => {
                     println!("Parsing errors: {:?}", errors);
