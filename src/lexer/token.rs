@@ -1,6 +1,6 @@
 use logos::Logos;
 
-#[derive(Logos, Debug, PartialEq, Clone)]
+#[derive(Logos, Debug, PartialEq, Clone, Hash, Eq)]
 pub enum Token {
     // Keywords
     #[token("realm")]
@@ -81,6 +81,6 @@ pub enum Token {
     Whitespace,
     
     // Error fallback
-    #[error]
+
     Error,
 }

@@ -1,7 +1,8 @@
 pub mod hive;
 
 use std::collections::HashMap;
-use crate::ast::nodes::{Program, Realm, Being, Ritual, Expression, Statement};
+use crate::ast::nodes::{Program, Ritual};
+
 
 /// Contesto di esecuzione per Nervs
 pub struct NervsRuntime {
@@ -70,7 +71,7 @@ impl NervsRuntime {
         let being = realm.beings.get_mut(being_name)
             .ok_or_else(|| format!("Being {} not found in realm {}", being_name, realm_name))?;
         
-        let ritual = being.rituals.get(ritual_name)
+        let _ritual = being.rituals.get(ritual_name)
             .ok_or_else(|| format!("Ritual {} not found in being {}", ritual_name, being_name))?;
         
         // Esecuzione base del ritual (da implementare completamente)

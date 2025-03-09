@@ -72,6 +72,17 @@ fn main() -> Result<(), Box<dyn Error>> {
             if tokens.len() > 20 {
                 println!("  ... and {} more", tokens.len() - 20);
             }
+
+            // Test del parser
+            match parser::parse(tokens) {
+                Ok(program) => {
+                    println!("\nParsing successful!");
+                    println!("Parsed {} realm(s)", program.realms.len());
+                },
+                Err(errors) => {
+                    println!("Parsing errors: {:?}", errors);
+                }
+            }
         },
         Err(e) => println!("Lexing error: {}", e),
     }
